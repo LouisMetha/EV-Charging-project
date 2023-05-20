@@ -190,7 +190,7 @@ double* WeightedGraphType::shortestPath(int vertex)
                     smallestWeight[j] = minWeight + weights[v][j];
     }
 
-	printShortestDistance(vertex);
+	//printShortestDistance(vertex);
 	return smallestWeight;
 	
 }

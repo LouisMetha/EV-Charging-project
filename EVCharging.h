@@ -210,10 +210,13 @@ void EVCharging::findNearestChargingStation() {
 	}
 
 	while (!sortedDistances.empty()) {
-		cout << setw(4) << sortedDistances.top().index << setw(12) << sortedDistances.top().distance << endl;
+		if (!sortedDistances.top().distance == 0 && locations[sortedDistances.top().index].chargerInstalled) {
+			cout << "\nThe nearest charging station: " << locations[sortedDistances.top().index].locationName << endl;
+			cout << "At distance of " << sortedDistances.top().distance << "km.";
+			break;
+		}
 		sortedDistances.pop();
 	}
-
 }
 
 void EVCharging::getCurrentLocation() {

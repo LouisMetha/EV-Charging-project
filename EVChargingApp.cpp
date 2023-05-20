@@ -28,7 +28,7 @@ int main() {
 	charging.findChargingStations(); //task 3
 	charging.findAdjacentWithChargingStations(); // task 4
 	charging.findLowestCost(); // task 5
-	charging.findNearestChargingStation();
+	charging.findNearestChargingStation(); // task 6
 
 	return 0;
 }
