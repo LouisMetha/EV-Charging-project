@@ -14,6 +14,7 @@ private:
 	int numberOfLocations;
 	WeightedGraphType* weightedGraph;
 	priority_queue<Location> chargingStations;
+	list<int> adjacentLocations;
 	int currentLocation = INT_MAX;
 	int charge_amount = rand() % 41 + 10;
 
@@ -37,6 +38,9 @@ public:
 EVCharging::EVCharging() {
 	inputLocations();
 	weightedGraph = new WeightedGraphType(numberOfLocations);
+	printLocations();
+	getCurrentLocation();
+	adjacentLocations = weightedGraph->getAdjancencyList(currentLocation);
 }
 
 EVCharging::~EVCharging() {
@@ -82,7 +86,7 @@ void EVCharging::inputLocations() {
 void EVCharging::getCurrentLocation() {
 
 	while (currentLocation > weightedGraph->getSize()){
-		cout << "\nEnter the location number: ";
+		cout << "\nEnter current location number: ";
 		cin >> currentLocation;
 	}
 
@@ -155,11 +159,7 @@ void EVCharging::printChargingStations(const priority_queue<Location>& l) {
 
 void EVCharging::findAdjacentWithChargingStations() {
 	
-	list<int> adjacentLocations;
 	bool none = false;
-
-	adjacentLocations = weightedGraph->getAdjancencyList(currentLocation);
-	
 	cout << "\nList of adjacent locations with charging stations ----------------\n\n";
 	cout << setw (8) << "Index" << setw (20) << "Location name" << setw (20) <<"Charging station" << setw(20) << "Charging price" << endl;
 
@@ -176,11 +176,8 @@ void EVCharging::findAdjacentWithChargingStations() {
 
 void EVCharging::findLowestCostAdj() {
 
-	list<int> adjacentLocations;
 	priority_queue<Location> lowest;
 	bool none = false;
-
-	adjacentLocations = weightedGraph->getAdjancencyList(currentLocation);
 
 	for (int l : adjacentLocations) {
 		if (locations[l].chargerInstalled) {
@@ -188,14 +185,17 @@ void EVCharging::findLowestCostAdj() {
 			none = true;
 		}
 	}
+
+	while (charge_amount > 25 && lowest.top().chargingPrice == 0) {
+		cout << "\n**Unable to charge at free station (>25kWh): " << lowest.top().locationName;
+		lowest.pop();
+	}
 	
 	cout << "\nAdjacent location with the lowest charging cost: ";
 	if (!none) {
 		cout << "---NONE---";
 	} else {
-		while (charge_amount > 25 && lowest.top().chargingPrice == 0) {
-			lowest.pop();
-		}
+	
 		cout << lowest.top().locationName << endl;
 		cout << setw (20) << "Location name" << setw(20) << "Required amount" << setw(20) <<"Charging amount" 
 		<< setw(12) << "Distance" << setw(20) << "Charging price" << setw(12) << "Cost" << endl;
