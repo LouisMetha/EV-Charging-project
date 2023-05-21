@@ -21,7 +21,7 @@ int main() {
 	srand(time(NULL));
 	EVCharging charging;
 
-	// charging.printAdjacencyMatrix();
+	charging.printAdjacencyMatrix();
 	// charging.BFT(); // task 8.4
 
 	charging.findChargingStations(); //task 3
@@ -29,6 +29,7 @@ int main() {
 	charging.findLowestCostAdj(); // task 5
 	charging.findNearestChargingStation(); // task 6
 	charging.findLowestCostStations(); // task 7
+	charging.findOnewayLowestCost(); // task 8 and 9
 
 	return 0;
 }
