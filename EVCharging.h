@@ -27,7 +27,7 @@ public:
 	void printChargingStations(const priority_queue<Location>& l);
 	void findLowestCost();
 	void findAdjacentWithChargingStations();
-	double calculateCost(double price, int weight);
+	double calculateCost(double price, int weight, int charge_amount);
 	void findNearestChargingStation();
 	void getCurrentLocation();
 };
@@ -158,7 +158,7 @@ void EVCharging::findAdjacentWithChargingStations() {
 		}
 	}
 	
-	if (none == false)
+	if (!none)
 		cout << "---NONE---";
 }
 
@@ -167,6 +167,7 @@ void EVCharging::findLowestCost() {
 	list<int> adjacentLocations;
 	priority_queue<Location> lowest;
 	bool none = false;
+	int charge_amount = rand() % 41 + 10;
 
 	adjacentLocations = weightedGraph->getAdjancencyList(currentLocation);
 
@@ -181,18 +182,22 @@ void EVCharging::findLowestCost() {
 		cout << "---NONE---";
 	} else {
 		cout << "\nAdjacent location with the lowest charging cost: " << lowest.top().locationName << endl;
-		double cost = calculateCost(lowest.top().chargingPrice, weightedGraph->getWeight(currentLocation,lowest.top().index));
+		double cost = calculateCost(lowest.top().chargingPrice, weightedGraph->getWeight(currentLocation,lowest.top().index),charge_amount);
 		cout << "Cost: $" << cost << endl;
 	}
 }
 
-double EVCharging::calculateCost(double price, int weight) {
+double EVCharging::calculateCost(double price, int weight ,int charge_amount) {
 
 	double travel_cost = 0.1;
-	int charge_amount = rand() % 41 + 10;
+	cout << "Required charging amount: " << charge_amount << "kWh" << endl;
+
+	if (price == 0 && charge_amount > 25)
+		charge_amount = 25;
+
+	cout << "Charging amount: " << charge_amount << "kWh" << endl;
 	cout << "Distance: " << weight << "km" << endl;
 	cout << "Charging price: $" << price << endl;
-	cout << "Charging amount: " << charge_amount << "kWh" << endl;
 
 	return (weight * 2 * travel_cost) + (charge_amount * price);
 }
@@ -212,7 +217,7 @@ void EVCharging::findNearestChargingStation() {
 	while (!sortedDistances.empty()) {
 		if (!sortedDistances.top().distance == 0 && locations[sortedDistances.top().index].chargerInstalled) {
 			cout << "\nThe nearest charging station: " << locations[sortedDistances.top().index].locationName << endl;
-			cout << "At distance of " << sortedDistances.top().distance << "km.";
+			cout << "Disctance: " << int(sortedDistances.top().distance) << "km.";
 			break;
 		}
 		sortedDistances.pop();
