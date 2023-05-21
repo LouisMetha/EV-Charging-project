@@ -12,6 +12,7 @@ using namespace std;
 
 #include "Location.h"
 #include "distances.h"
+#include "costs.h"
 #include "WeightedGraph.h"
 #include "EVCharging.h"
 
@@ -27,8 +28,9 @@ int main() {
 	charging.findChargingStations(); //task 3
 	charging.getCurrentLocation();
 	charging.findAdjacentWithChargingStations(); // task 4
-	charging.findLowestCost(); // task 5
+	//charging.findLowestCostAdj(); // task 5
 	charging.findNearestChargingStation(); // task 6
+	charging.findLowestCostStations(); // task 7
 
 	return 0;
 }
