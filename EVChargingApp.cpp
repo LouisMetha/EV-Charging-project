@@ -21,14 +21,14 @@ int main() {
 	srand(time(NULL));
 	EVCharging charging;
 
-	charging.printLocations();
-	charging.printAdjacencyMatrix();
+	// charging.printLocations();
+	// charging.printAdjacencyMatrix();
 	// charging.BFT(); // task 8.4
 
 	charging.findChargingStations(); //task 3
 	charging.getCurrentLocation();
 	charging.findAdjacentWithChargingStations(); // task 4
-	//charging.findLowestCostAdj(); // task 5
+	charging.findLowestCostAdj(); // task 5
 	charging.findNearestChargingStation(); // task 6
 	charging.findLowestCostStations(); // task 7
 

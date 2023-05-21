@@ -28,7 +28,7 @@ public:
 	void printChargingStations(const priority_queue<Location>& l);
 	void findLowestCostAdj();
 	void findAdjacentWithChargingStations();
-	double calculateCost(double price, int weight, string lname);
+	double calculateCost (double price, int weight, string lname) const;
 	void findNearestChargingStation();
 	void findLowestCostStations();
 	void getCurrentLocation();
@@ -193,31 +193,34 @@ void EVCharging::findLowestCostAdj() {
 	if (!none) {
 		cout << "---NONE---";
 	} else {
+		while (charge_amount > 25 && lowest.top().chargingPrice == 0) {
+			lowest.pop();
+		}
 		cout << lowest.top().locationName << endl;
 		cout << setw (20) << "Location name" << setw(20) << "Required amount" << setw(20) <<"Charging amount" 
-		<< setw(12) << "Distance" << setw(20) << "Charging price" << setw(20) << "Cost" << endl;
+		<< setw(12) << "Distance" << setw(20) << "Charging price" << setw(12) << "Cost" << endl;
 
 		calculateCost(lowest.top().chargingPrice, weightedGraph->getWeight(currentLocation, lowest.top().index), lowest.top().locationName);
 	}
 }
 
-double EVCharging::calculateCost(double price, int weight, string lname) {
+double EVCharging::calculateCost(double price, int weight, string lname) const {
 	
 	cout << setw(18) << lname;
 	cout << setw(15) << charge_amount << "kWh";
-
-
+	
 	double cost;
 	double travel_cost = 0.1;
 
-	if (price == 0 && charge_amount > 25)
-		charge_amount = 25;
+	if (price == 0 && charge_amount > 25){
+		cout << "    ---------------Unable to charge------------------\n";
+		return 0;
+	}
 
 	cost = (weight * 2 * travel_cost) + (charge_amount * price);
-
 	cout << setw(17) << charge_amount << "kWh";
 	cout << setw(12) << weight << "km";
-	cout << setw(12) << "$" << price << "/kWn";
+	cout << setw(12) << "$" << fixed << setprecision(2) << price << "/kWn";
 	cout << setw(10) << "$" << cost << endl;
 
 	return cost;
@@ -238,7 +241,7 @@ void EVCharging::findNearestChargingStation() {
 	while (!sortedDistances.empty()) {
 		if (!sortedDistances.top().distance == 0 && locations[sortedDistances.top().index].chargerInstalled) {
 			cout << "\nThe nearest charging station: " << locations[sortedDistances.top().index].locationName << endl;
-			cout << "Distance: " << int(sortedDistances.top().distance) << "km" << endl;
+			cout << "Distance: " << int(sortedDistances.top().distance) << "km\n\n";
 			break;
 		}
 		sortedDistances.pop();
@@ -249,7 +252,8 @@ void EVCharging::findLowestCostStations() {
 
 	priority_queue<Costs> sortedCost;
 	double* distances = weightedGraph->shortestPath(currentLocation);
-	cout << setw (20) << "Location name" << setw(20) << "Required amount" << setw(20) <<"Charging amount" << setw(12) << "Distance" << setw(20) << "Charging price" << setw(10) << "Cost" << endl;
+	cout << setw (20) << "Location name" << setw(20) << "Required amount" << setw(20) <<"Charging amount" 
+	<< setw(12) << "Distance" << setw(20) << "Charging price" << setw(12) << "Cost" << endl;
 
 	for (int i = 0; i < weightedGraph->getSize(); i++) {
 		if (locations[i].chargerInstalled && i != currentLocation) {
@@ -259,15 +263,15 @@ void EVCharging::findLowestCostStations() {
 			c.cost = calculateCost(locations[i].chargingPrice, distances[i],locations[i].locationName);
 			sortedCost.push(c);
 		}
-
 	}
 
-	cout << "LOWEST COSTS===========================\n\n";
-
-	// while (!sortedCost.empty()) {
-	// 	cout << "Index: " << sortedCost.top().index << " Cost: " << sortedCost.top().cost << endl;
-	// 	sortedCost.pop();
-	// }
+	while (!sortedCost.empty()) {
+		if (sortedCost.top().cost != 0) {
+			cout << "LOWEST COSTS location is " << locations[sortedCost.top().index].locationName << " at the cost of $" << sortedCost.top().cost << endl;
+			break;
+		}
+		sortedCost.pop();
+	}
 }
 
 
