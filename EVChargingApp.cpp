@@ -29,8 +29,8 @@ int main() {
 	charging.findLowestCostAdj(); // task 5
 	charging.findNearestChargingStation(); // task 6
 	charging.findCheapestStations(); // task 7
-	// charging.findOnewayCheapest(); // task 8
-	charging.findCheapestPathMultipleStops(); // task 9
+	charging.findOnewayCheapest(); // task 8
+	//charging.findCheapestPathMultipleStops(); // task 9
 
 	return 0;
 }
