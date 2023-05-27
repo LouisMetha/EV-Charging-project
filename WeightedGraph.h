@@ -269,7 +269,7 @@ void WeightedGraphType::printShortestDistance(int vertex)
     for (int j = 0; j < gSize; j++) {
         cout << setw(4) << j << setw(12) << smallestWeight[j] << endl;
 	}
-		
+	
     cout << endl;
 }
 
