@@ -19,6 +19,6 @@ Bankstown,1,0.55
 Liverpool,0,-1
 Leppington,0,-1
 Campbelltown,1,0.55
-Miranda,1,0.40
-Richmond,1,0
+Miranda,1,0
+Richmond,1,0.2
 Narrabeen,1,0.45
