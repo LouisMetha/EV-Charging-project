@@ -34,7 +34,7 @@ public:
 	double calculateCostOneway(double price, int weight, string lname) const;
 	void findNearestChargingStation();
 	void findCheapestStations();
-	void findOnewayCheapest();
+	void findCheapestSingleCharge();
 	void getCurrentLocation();
 	void findCheapestPathMultipleStops();
 	int cheapestMidPointStation(int origin, int dest, int dest_charge_amount, double& origin_cost);
@@ -131,7 +131,6 @@ void EVCharging::printAdjacencyMatrix() {
 	}
 }
 
-// Task 8.4 ************************************************************************
 void EVCharging::BFT() {
 
 	list<int> indices = weightedGraph->breadthFirstTraversal();
@@ -328,7 +327,7 @@ void EVCharging::findCheapestStations() {
 	}
 }
 
-void EVCharging::findOnewayCheapest() {
+void EVCharging::findCheapestSingleCharge() {
 
 	cout << "\n====== Task 8 - Find the cheapest charging station between origin and destination (single charging) ======\n\n";
 
@@ -345,6 +344,7 @@ void EVCharging::findOnewayCheapest() {
 
 	charge_location = cheapestMidPointStation(origin, destination, charge_amount, cost);
 	
+	cout << "From " << locations[origin].locationName << " to " << locations[destination].locationName << endl;
 	cout << "Path: ";
 
 	if (charge_location != origin){
@@ -360,7 +360,6 @@ void EVCharging::findOnewayCheapest() {
 	printPath(path2);
 	cout << locations[destination].locationName << endl;
 
-	cout << "From " << locations[origin].locationName << " to " << locations[destination].locationName << endl;
 	cout << "Charge amount: " << charge_amount << "kWh" << endl;
 	cout << "Cheapest to charge at: " << locations[charge_location].locationName << endl;
 	cout << "Total cost: $" << cost << endl;
@@ -374,8 +373,10 @@ void EVCharging::findCheapestPathMultipleStops() {
 	int origin = currentLocation;
 	double cost = 0;
 	int counter = 0;
+	int charge_location = 0;
 
-	while (destination > weightedGraph->getSize()){
+
+	while (destination > weightedGraph->getSize()) {
 		cout << "\nEnter destiantion number: ";
 		cin >> destination;
 	}
@@ -383,33 +384,77 @@ void EVCharging::findCheapestPathMultipleStops() {
 
 	if (charge_amount <= 25) {
 
-		int charge_location = cheapestMidPointStation(origin, destination, charge_amount, cost);
-		counter++;
-		cout << "Charge at: " << locations[charge_location].locationName << endl;
-		cout << "Remaining charge amount: " << charge_amount << endl; 
-		cout << "Cheapest oneway from " << locations[currentLocation].locationName << " to " << locations[destination].locationName << " is $" << cost << endl;
-		cout << "Number of charge(s): " << counter << " at " << locations[charge_location].locationName << endl;
+		charge_location = cheapestMidPointStation(origin, destination, charge_amount, cost);
+		
+		cout << "From " << locations[origin].locationName << " to " << locations[destination].locationName << endl;
+		cout << "Path: ";
+
+		if (charge_location != origin){
+			stack<int> path1 = weightedGraph->shortestPath(origin, charge_location);
+			if(path1.empty())
+				cout << locations[origin].locationName << " > ";
+			printPath(path1);
+		}
+
+		stack<int> path2 = weightedGraph->shortestPath(charge_location, destination);
+		if(path2.empty())
+			cout << locations[origin].locationName << " > ";
+		printPath(path2);
+		cout << locations[destination].locationName << endl;
+
+		cout << "Charge amount: " << charge_amount << "kWh" << endl;
+		cout << "Cheapest to charge at: " << locations[charge_location].locationName << endl;
+		cout << "Total cost: $" << cost << endl;
 
 	} else {
 		
 		double prevCost = cost;
-		int charge_location;
+		cout << "Total Charge amount: " << charge_amount << "kWh" << endl;
+		queue<int> prevLocation;
 
-		while (charge_amount != 0 || charge_location != destination) {
+		while (charge_amount > 0) {
 			counter++;
 			prevCost = cost;
-			charge_location = cheapestMidPointStation(origin, destination, charge_amount, cost);
+			prevLocation.push(origin);
+			charge_location = cheapestMultiStops(origin, destination, charge_amount, cost);
+
 			if (charge_amount > 25) {
 				charge_amount -= 25;
 			} else {
 				charge_amount -= charge_amount;
 			}
+			
 			origin = charge_location;
 			cout << "Charge at: " << locations[charge_location].locationName << " for $" << cost - prevCost << endl;
 			cout << "Remaining charge amount: " << charge_amount << endl; 
 		}
 
-		cout << "\nCheapest oneway from " << locations[currentLocation].locationName << " to " << locations[destination].locationName << " is $" << cost << endl;
+		prevCost = cost;
+		charge_location = cheapestMidPointStation(origin, destination, charge_amount, cost);
+		
+		cout << "From " << locations[origin].locationName << " to " << locations[destination].locationName << endl;
+
+		cout << "Path: ";
+		while (!prevLocation.empty()) {
+			cout << locations[prevLocation.front()].locationName << " > ";
+			prevLocation.pop();
+		}
+		
+		if (charge_location != origin){
+			stack<int> path1 = weightedGraph->shortestPath(origin, charge_location);
+			if(path1.empty())
+				cout << locations[origin].locationName << " > ";
+			printPath(path1);
+		}
+
+		stack<int> path2 = weightedGraph->shortestPath(charge_location, destination);
+		if(path2.empty())
+			cout << locations[origin].locationName << " > ";
+		printPath(path2);
+
+		cout << locations[destination].locationName << endl;
+		cout << "Remaining travel cost from " << locations[charge_location].locationName << ": $" << cost << endl;
+		cout << "Total cost: $" <<  prevCost + cost << endl;
 		cout << "Number of charge(s): " << counter << endl;
 	}
 }
@@ -429,17 +474,13 @@ int EVCharging::cheapestMidPointStation(int origin, int dest, int dest_charge_am
 			c.cost = (distances_origin[i] + distances_dest[i]) * travel_cost + dest_charge_amount * locations[i].chargingPrice;
 			sortedCost.push(c);
 
-		} else if ( dest_charge_amount > 25  && locations[i].chargingPrice > 0) {
+		} else if (dest_charge_amount > 25  && locations[i].chargingPrice > 0) {
 			Costs c;
 			c.index = i;
 			c.cost = (distances_origin[i] + distances_dest[i]) * travel_cost + dest_charge_amount * locations[i].chargingPrice;
 			sortedCost.push(c);
 		}
 	}
-
-
-	cout << "\nDis from " << locations[origin].locationName << " to " << locations[sortedCost.top().index].locationName << ": " << distances_origin[sortedCost.top().index] << endl;
-	cout << "Dis from " << locations[sortedCost.top().index].locationName << " to " << locations[dest].locationName << ": " << distances_dest[sortedCost.top().index] << endl;
 
 	cost = sortedCost.top().cost;
 
@@ -456,9 +497,37 @@ void EVCharging::printPath(stack<int> path) {
 
 int EVCharging::cheapestMultiStops(int origin, int dest, int dest_charge_amount, double& cost) {
 
+	double* distances_origin = weightedGraph->shortestPath(origin);
+	double* distances_dest = weightedGraph->shortestPath(dest);
+	double travel_cost = 0.1;
 
-	return 0;
+	priority_queue<Costs> sortedCost;
 
+	for (int i = 0; i < weightedGraph->getSize(); i++) {
+		if (dest_charge_amount <= 25 && locations[i].chargerInstalled && locations[i].index != origin) {
+			Costs c;
+			c.index = i;
+			c.cost = (distances_origin[i] + distances_dest[i]) * travel_cost + dest_charge_amount * locations[i].chargingPrice;
+			sortedCost.push(c);
+
+		} else if (locations[i].index == origin && locations[i].chargingPrice == 0) {
+			continue;
+
+		} else if (locations[i].chargerInstalled) {
+			Costs c;
+			c.index = i;
+			c.cost = (distances_origin[i] + distances_dest[i]) * travel_cost + dest_charge_amount * locations[i].chargingPrice;
+			sortedCost.push(c);
+		}
+	}
+
+	if (charge_amount > 0) {
+		cost = cost + (distances_origin[sortedCost.top().index] * travel_cost + dest_charge_amount * locations[sortedCost.top().index].chargingPrice);
+	} else {
+		cost = cost + sortedCost.top().cost;
+	}
+
+	return sortedCost.top().index;
 }
 
 #endif /* EVCHARGING_H_ */

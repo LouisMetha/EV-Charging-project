@@ -218,8 +218,7 @@ stack<int> WeightedGraphType::shortestPath(int vertex, int dest)
 
         for (int j = 0; j < gSize; j++)
         {
-            if (!weightFound[j] && smallestWeight[j] < minWeight)
-            {
+            if (!weightFound[j] && smallestWeight[j] < minWeight) {
                 v = j;
                 minWeight = smallestWeight[j];
             }
