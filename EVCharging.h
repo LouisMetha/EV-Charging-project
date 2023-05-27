@@ -38,6 +38,7 @@ public:
 	void getCurrentLocation();
 	void findCheapestPathMultipleStops();
 	int findCheapestMidPoint(int origin, int dest, int dest_charge_amount, double& cost);
+	int cheapestMidPointStation(int origin, int dest, int dest_charge_amount, double& origin_cost);
 };
 
 EVCharging::EVCharging() {
@@ -205,8 +206,12 @@ void EVCharging::findLowestCostAdj() {
 	}
 	
 	while (none && charge_amount > 25 && locations[lowest.top().index].chargingPrice == 0) {
-		cout << "\n**Unable to charge at free station (>25kWh): " << locations[lowest.top().index].locationName;
-		lowest.pop();
+		if (!lowest.empty()) {
+			cout << "\n**Unable to charge at free station (>25kWh): " << locations[lowest.top().index].locationName;
+			lowest.pop();
+		} else {
+			break;
+		}
 	}
 
 	cout << "\nAdjacent location with the lowest charging cost: ";
@@ -331,7 +336,6 @@ void EVCharging::findOnewayCheapest() {
 	int destination = INT_MAX;
 	int charge_location = 0;
 	double cost = 0;
-	double prevCost = 0;
 
 	while (destination > weightedGraph->getSize()){
 		cout << "\nEnter destiantion number: ";
@@ -339,7 +343,11 @@ void EVCharging::findOnewayCheapest() {
 	}
 	cout << "Location: " << locations[destination].locationName << endl;
 
-	charge_location = findCheapestMidPoint(origin, destination, charge_amount, cost);
+	charge_location = cheapestMidPointStation(origin, destination, charge_amount, cost);
+
+	double* new_path = weightedGraph->shortestPath(charge_location);
+
+	
 
 	cout << "From " << locations[origin].locationName << " to " << locations[destination].locationName << endl;
 	cout << "Charge amount: " << charge_amount << "kWh" << endl;
@@ -394,6 +402,28 @@ void EVCharging::findCheapestPathMultipleStops() {
 	}
 }
 
+int EVCharging::cheapestMidPointStation(int origin, int dest, int dest_charge_amount, double& origin_cost) {
+
+	double* distances_origin = weightedGraph->shortestPath(origin);
+	double* distances_dest = weightedGraph->shortestPath(dest);
+	double travel_cost = 0.1;
+
+	priority_queue<Costs> sortedCost;
+
+	for (int i = 0; i < weightedGraph->getSize(); i++) {
+		if (dest_charge_amount <= 25 && locations[i].chargingPrice > 0) {
+			Costs c;
+			c.index = i;
+			c.cost = distances_origin[i] + distances_dest[i] * travel_cost + dest_charge_amount * locations[i].chargingPrice;
+			sortedCost.push(c);
+		}
+	}
+
+	origin_cost = (distances_origin[sortedCost.top().index] + distances_dest[sortedCost.top().index] * travel_cost) + (dest_charge_amount * locations[sortedCost.top().index].chargingPrice);
+
+	return sortedCost.top().index;
+}
+
 int EVCharging::findCheapestMidPoint(int origin, int dest, int dest_charge_amount, double& cost) {
 
 	double* distances_origin = weightedGraph->shortestPath(origin);
@@ -405,10 +435,10 @@ int EVCharging::findCheapestMidPoint(int origin, int dest, int dest_charge_amoun
 	priority_queue<Costs> sortedCost;
 
 	for (int i = 0; i < weightedGraph->getSize(); i++) {
-		
+
 		Costs c;
 
-		if (locations[i].chargingPrice > 0 && i != origin && dest_charge_amount > 25) {
+		if (locations[i].chargingPrice > 0 && dest_charge_amount > 25) {
 
 			c.index = i;
 			c.distance = distances_origin[i];
@@ -416,7 +446,7 @@ int EVCharging::findCheapestMidPoint(int origin, int dest, int dest_charge_amoun
 			dest_cost = (distances_dest[i] * travel_cost);
 			c.cost = origin_cost + dest_cost;
 
-		} else if (locations[i].chargingPrice == 0 && i != origin && dest_charge_amount > 25) {
+		} else if (locations[i].chargingPrice == 0 && dest_charge_amount > 25) {
 
 			c.index = i;
 			c.distance = distances_origin[i];
@@ -424,7 +454,7 @@ int EVCharging::findCheapestMidPoint(int origin, int dest, int dest_charge_amoun
 			dest_cost = (distances_dest[i] * travel_cost) + ((dest_charge_amount - 25) * locations[dest].chargingPrice);
 			c.cost = origin_cost + dest_cost;
 
-		} else if (locations[i].chargerInstalled && i != origin && dest_charge_amount <= 25) {
+		} else if (locations[i].chargerInstalled && dest_charge_amount <= 25) {
 
 			c.index = i;
 			c.distance = distances_origin[i];
@@ -450,7 +480,7 @@ int EVCharging::findCheapestMidPoint(int origin, int dest, int dest_charge_amoun
 		sortedCost.push(c);	
 	}
 	
-	cout << "top up Cost: " << sortedCost.top().cost << " from " << locations[origin].locationName << " to " << locations[sortedCost.top().index].locationName << endl; 
+	// cout << "top up Cost: " << sortedCost.top().cost << " from " << locations[origin].locationName << " to " << locations[sortedCost.top().index].locationName << endl; 
 	cost = cost + sortedCost.top().cost;
 	return sortedCost.top().index;
 }
