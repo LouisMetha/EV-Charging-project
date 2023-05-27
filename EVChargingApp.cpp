@@ -3,6 +3,8 @@
 #include <string>
 #include <list>
 #include <queue>
+#include <stack>
+#include <vector>
 #include <map>
 #include <iomanip>
 #include <cfloat>

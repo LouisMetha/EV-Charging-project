@@ -37,6 +37,7 @@ public:
 	void printAdjacencyMatrix();
 	list<int> breadthFirstTraversal();
 	double* shortestPath(int vertex);
+	stack<int> shortestPath(int vertex,int dest);
 	void printShortestDistance(int vertex);
 
 };
@@ -90,6 +91,7 @@ WeightedGraphType::~WeightedGraphType() {
 	delete[] graph;
 	delete[] weights;
 	delete[] smallestWeight;
+
 }
 
 void WeightedGraphType::printAdjacencyMatrix() { //print adjacency matrix for debug purpose
@@ -153,18 +155,15 @@ list<int> WeightedGraphType::breadthFirstTraversal() {
 
 double* WeightedGraphType::shortestPath(int vertex)
 {
+    bool *weightFound = new bool[gSize];
 
 	for (int i = 0; i < gSize; i++)
 		smallestWeight = new double[gSize];
 
-    for (int j = 0; j < gSize; j++)
+    for (int j = 0; j < gSize; j++) {
         smallestWeight[j] = weights[vertex][j];
-
-    bool *weightFound;
-    weightFound = new bool[gSize];
-
-    for (int j = 0; j < gSize; j++)
         weightFound[j] = false;
+	}
 
     weightFound[vertex] = true;
     smallestWeight[vertex] = 0;
@@ -186,13 +185,78 @@ double* WeightedGraphType::shortestPath(int vertex)
 
         for (int j = 0; j < gSize; j++)
             if (!weightFound[j])
-                if (minWeight + weights[v][j] < smallestWeight[j])
+                if (minWeight + weights[v][j] < smallestWeight[j]) {
                     smallestWeight[j] = minWeight + weights[v][j];
+				}
     }
 
-	// printShortestDistance(vertex);
+	delete[] weightFound;
 	return smallestWeight;
-	
+}
+
+stack<int> WeightedGraphType::shortestPath(int vertex, int dest)
+{
+    stack<int> path;
+    vector<int> checkedVertex(gSize);
+
+    bool *weightFound = new bool[gSize];
+    double *smallestWeight = new double[gSize];
+
+    for (int j = 0; j < gSize; j++) {
+        smallestWeight[j] = weights[vertex][j];
+        weightFound[j] = false;
+        checkedVertex[j] = INT_MAX;
+    }
+
+    weightFound[vertex] = true;
+    smallestWeight[vertex] = 0;
+
+    for (int i = 0; i < gSize - 1; i++)
+    {
+        double minWeight = DBL_MAX;
+        int v = INT_MAX;
+
+        for (int j = 0; j < gSize; j++)
+        {
+            if (!weightFound[j] && smallestWeight[j] < minWeight)
+            {
+                v = j;
+                minWeight = smallestWeight[j];
+            }
+        }
+
+        if (v == INT_MAX || v == dest)
+            break;
+
+        weightFound[v] = true;
+
+        for (int j = 0; j < gSize; j++)
+        {
+            if (!weightFound[j] && minWeight + weights[v][j] < smallestWeight[j])
+            {
+                smallestWeight[j] = minWeight + weights[v][j];
+                checkedVertex[j] = v;
+            }
+        }
+    }
+
+    if (checkedVertex[dest] != INT_MAX)
+    {
+        int currentVertex = dest;
+        while (currentVertex != vertex && currentVertex != INT_MAX)
+        {	
+			if (currentVertex != dest) {
+				path.push(currentVertex);
+            	currentVertex = checkedVertex[currentVertex];
+			} else {
+				currentVertex = checkedVertex[currentVertex];
+			}
+        }
+        path.push(vertex);
+    }
+
+    delete[] weightFound;
+    return path;
 }
 
 void WeightedGraphType::printShortestDistance(int vertex)
