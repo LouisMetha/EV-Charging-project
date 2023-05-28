@@ -8,7 +8,7 @@ Parramatta,1,0.25
 Olympic Park,1,0.4
 Burwood,1,0.46
 Mascot,1,0.45
-Bondi Juction,1,0.25
+Bondi Junction,1,0.25
 Manly,1,0
 Chatswood,1,0.55
 Macquarie Pk,1,0.33
