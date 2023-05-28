@@ -373,6 +373,7 @@ void EVCharging::findCheapestPathMultipleStops() {
 	double cost = 0;
 	int counter = 0;
 	int charge_location = 0;
+	cin >> charge_amount;
 
 	while (destination > weightedGraph->getSize()) {
 		cout << "\nEnter destiantion number: ";
@@ -409,27 +410,39 @@ void EVCharging::findCheapestPathMultipleStops() {
 		double prevCost = cost;
 		cout << "Total Charge amount: " << charge_amount << "kWh" << endl << endl;
 		queue<int> prevLocation;
-
+		int last_push = -1;
 		while (charge_amount > 0) {
+			if(counter == 0 ){
+				prevLocation.push(origin);
+				last_push = origin;
+			}
 			counter++;
 			prevCost = cost;
 			charge_location = cheapestMultiStops(origin, destination, charge_amount, cost);
 
 			stack<int> path = weightedGraph->shortestPath(origin, charge_location);
+
 			while(!path.empty()) {
+				if (last_push == path.top()) {
+					path.pop();
+				}
+
 				prevLocation.push(path.top());
 				path.pop();
 			}
 
 			if (charge_amount > 25) {
 				charge_amount -= 25;
-				prevLocation.push(charge_location);
+				if(charge_location != origin) {
+					prevLocation.push(charge_location);
+					last_push = charge_location;
+				}
 			} else {
 				charge_amount -= charge_amount;
-				
 			}
 			
 			origin = charge_location;
+
 			cout << "Charge at: " << locations[charge_location].locationName << " for $" << cost - prevCost << endl;
 			cout << "Remaining charge amount: " << charge_amount << endl << endl;
 		}
@@ -510,6 +523,12 @@ int EVCharging::cheapestMultiStops(int origin, int dest, int dest_charge_amount,
 
 	for (int i = 0; i < weightedGraph->getSize(); i++) {
 		if (dest_charge_amount <= 25 && locations[i].chargerInstalled && locations[i].index != origin) {
+			Costs c;
+			c.index = i;
+			c.cost = (distances_origin[i] + distances_dest[i]) * travel_cost + dest_charge_amount * locations[i].chargingPrice;
+			sortedCost.push(c);
+
+		} else if (dest_charge_amount > 25 && locations[i].index == origin && locations[i].chargingPrice == 0) {
 			Costs c;
 			c.index = i;
 			c.cost = (distances_origin[i] + distances_dest[i]) * travel_cost + dest_charge_amount * locations[i].chargingPrice;
