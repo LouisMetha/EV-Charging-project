@@ -364,7 +364,7 @@ void EVCharging::findCheapestSingleCharge() {
 	int dest_location = getLocation();
 	cout << endl;
 
-	int origin = current_location;
+	int origin = current_location;	
 	int destination = dest_location;
 	int charge_location = 0;
 	double cost = 0;
@@ -392,16 +392,12 @@ void EVCharging::findCheapestSingleCharge() {
 	printPath(path2);
 
 	cout << locations[destination].locationName << endl;
-
-
-
-
 	cout << "Total cost: $" << cost << endl;
 }
 
 void EVCharging::findCheapestPathMultipleStops() {
 
-	cout << "\n====== Task 9 - Find the cheapest charging station between origin and destination (single charging) ======\n\n";
+	cout << "\n====== Task 9 - Find the cheapest charging station between origin and destination (Multiple stops) ======\n\n";
 
 	cout << "Enter current location: ";
 	int current_location = getLocation();

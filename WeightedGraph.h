@@ -201,7 +201,7 @@ stack<int> WeightedGraphType::shortestPath(int vertex, int dest)
 
     bool *weightFound = new bool[gSize];
 
-		for (int i = 0; i < gSize; i++)
+	for (int i = 0; i < gSize; i++)
 		smallestWeight = new double[gSize];
 
     for (int j = 0; j < gSize; j++) {
