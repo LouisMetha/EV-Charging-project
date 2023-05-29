@@ -205,7 +205,8 @@ void EVCharging::findAdjacentWithChargingStations() {
 void EVCharging::findLowestCostAdj() {
 
 	cout << "\n====== Task 5 - Find the adjacent charging station with lowest travel & charging cost ======\n\n";
-
+	
+	charge_amount = rand() % 41 + 10;
 	cout << "Enter current location: ";
 	int key_location = getLocation();
 	adjacentLocations = weightedGraph->getAdjancencyList(key_location);
@@ -299,6 +300,7 @@ void EVCharging::findNearestChargingStation() {
 
 	cout << "\n====== Task 6 - Find the nearest charging station ======\n\n";
 
+	charge_amount = rand() % 41 + 10;
 	cout << "Enter current location: ";
 	int key_location = getLocation();
 	distances = weightedGraph->shortestPath(key_location);
@@ -326,6 +328,7 @@ void EVCharging::findCheapestStations() {
 
 	cout << "\n====== Task 7 - Find the cheapest charging station other than the current location ( >25kWh cannot charge at free station*) ======\n\n";
 	cout << "Enter current location: ";
+	charge_amount = rand() % 41 + 10;
 	int key_location = getLocation();
 	distances = weightedGraph->shortestPath(key_location);
 	priority_queue<Costs> sortedCost;
@@ -358,6 +361,7 @@ void EVCharging::findCheapestSingleCharge() {
 
 	cout << "\n====== Task 8 - Find the cheapest charging station between origin and destination (single charging) ======\n\n";
 	
+	charge_amount = rand() % 41 + 10;
 	cout << "Enter current location: ";
 	int current_location = getLocation();
 	cout << "Enter destination location: ";
@@ -399,6 +403,7 @@ void EVCharging::findCheapestPathMultipleStops() {
 
 	cout << "\n====== Task 9 - Find the cheapest charging station between origin and destination (Multiple stops) ======\n\n";
 
+	charge_amount = rand() % 41 + 10;
 	cout << "Enter current location: ";
 	int current_location = getLocation();
 	cout << "Enter destination location: ";
@@ -433,10 +438,13 @@ void EVCharging::findCheapestPathMultipleStops() {
 			printPath(path1);
 		}
 
-		stack<int> path2 = weightedGraph->shortestPath(charge_location, destination);
-		if(path2.empty())
-			cout << locations[charge_location].locationName << " > ";
-		printPath(path2);
+		if (charge_location != destination) {
+			stack<int> path2 = weightedGraph->shortestPath(charge_location, destination);
+			if(path2.empty())
+				cout << locations[charge_location].locationName << " > ";
+			printPath(path2);
+		}
+
 		cout << locations[destination].locationName << endl;
 		cout << "Total cost: $" << cost << endl;
 
@@ -446,6 +454,7 @@ void EVCharging::findCheapestPathMultipleStops() {
 		cout << "Total Charge amount: " << charge_amount << "kWh" << endl << endl;
 		queue<int> prevLocation;
 		int last_push = -1;
+
 		while (charge_amount > 0) {
 			if(counter == 0 ){
 				prevLocation.push(origin);
