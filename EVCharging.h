@@ -173,10 +173,9 @@ void EVCharging::printChargingStations(const priority_queue<Location>& l) {
 	}
 }
 
+// Need to upodate find 5 closest charging stations based on user's current location/coordinate
 void EVCharging::findAdjacentWithChargingStations() {
 	
-	cout << "\n====== Task 4 - List adjacent charging stations ======\n\n";
-
 	cout << "Enter current location: ";
 	int key_location = getLocation();
 	adjacentLocations = weightedGraph->getAdjancencyList(key_location);
@@ -196,9 +195,8 @@ void EVCharging::findAdjacentWithChargingStations() {
 		cout << "---NONE---";
 }
 
+// Retrieve cost from API then calculate costs, use  PQ for min-cost.
 void EVCharging::findLowestCostAdj() {
-
-	cout << "\n====== Task 5 - Find the adjacent charging station with lowest travel & charging cost ======\n\n";
 	
 	charge_amount = rand() % 41 + 10;
 	cout << "Enter current location: ";
