@@ -1,10 +1,3 @@
-/*
- * WeightedGraph.h
- *
- *  Created on: 29 Apr 2023
- *      Author: 2002345
- */
-
 #ifndef H_weightedGraph
 #define H_weightedGraph
 

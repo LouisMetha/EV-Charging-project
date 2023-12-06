@@ -1,16 +1,9 @@
-/*
- * Location.h
- *
- *  Created on: 29 Apr 2023
- *      Author: 2002345
- */
-
 #ifndef LOCATION_H_
 #define LOCATION_H_
 
 class Location {
 public:
-	int index;//Key
+	int index;
 	string locationName;
 	bool chargerInstalled;
 	double chargingPrice;
@@ -23,7 +16,7 @@ public:
 			cout << "no";
 
 		if(chargerInstalled && chargingPrice == 0)
-			cout << setw (28) << "free of charge" << endl;
+			cout << setw (28) << "Free of charge" << endl;
 		else if (!chargerInstalled )
 			cout << setw (17) << "N/A" << endl;
 		else

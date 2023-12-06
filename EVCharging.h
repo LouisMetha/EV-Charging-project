@@ -1,10 +1,3 @@
-/*
- * EVCharging.h
- *
- *  Created on: 29 Apr 2023
- *      Author: 2002345
- */
-
 #ifndef EVCHARGING_H_
 #define EVCHARGING_H_
 
