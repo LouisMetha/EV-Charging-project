@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/louis/OneDrive - Western Sydney University/COMP2009 - DSA/Ass2",
-      "program": "c:/Users/louis/OneDrive - Western Sydney University/COMP2009 - DSA/Ass2/build/Debug/outDebug",
+      "cwd": "c:/Users/louis/OneDrive - Western Sydney University/Completed subjects/COMP2009 - DSA/Ass2",
+      "program": "c:/Users/louis/OneDrive - Western Sydney University/Completed subjects/COMP2009 - DSA/Ass2/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

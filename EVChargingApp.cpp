@@ -41,7 +41,7 @@ int main() {
 
         switch (choice) {
             case 1:
-                charging.findChargingStations();
+                charging.BFT();
                 break;
             case 2:
                 charging.findAdjacentWithChargingStations();

@@ -97,12 +97,13 @@ void EVCharging::inputLocations() {
 
 int EVCharging::getLocation() {
 
-	cin.ignore();
     string name;
     bool locationFound = false;
 	int key;
+	cin.ignore();
+
     while (!locationFound) {
-        getline(cin, name);
+        getline(cin,name);
         key = getKeyFromName(name);
         if (key != -1) {
             locationFound = true;

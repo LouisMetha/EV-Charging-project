@@ -43,6 +43,7 @@ public:
 };
 
 WeightedGraphType::WeightedGraphType(int size) {
+	
 	gSize = 0;
 	ifstream infile;
 	char fileName[50] = "Weights.txt";
