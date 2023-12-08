@@ -1,9 +1,9 @@
 #ifndef EVCHARGING_H_
 #define EVCHARGING_H_
 
-class EVCharging {// you may also declare this class as an extension of WeightedGraph
+class EVCharging {
 private:
-	map<int, Location> locations;//It can also be unordered_map
+	map<int, Location> locations; //can also be unordered_map
 	int numberOfLocations;
 	WeightedGraphType* weightedGraph;
 	priority_queue<Location> chargingStations;
@@ -55,10 +55,6 @@ EVCharging::~EVCharging() {
 void EVCharging::inputLocations() {
 	ifstream infile;
 	char fileName[50] = "Locations.txt";
-
-//	cout << "Enter charging location file name: ";
-//	cin >> fileName;
-//	cout << endl;
 
 	infile.open(fileName);
 
@@ -148,8 +144,6 @@ void EVCharging::BFT() {
 }
 
 void EVCharging::findChargingStations() {
-
-	cout << "\n====== Task 3 - list all charging stations in ascending order of charging price ======\n\n";
 
 	for (auto l : locations) {
 		if (l.second.chargerInstalled) {
@@ -290,8 +284,6 @@ double EVCharging::calculateCost(double price, int weight, string lname) const {
 
 void EVCharging::findNearestChargingStation() {
 
-	cout << "\n====== Task 6 - Find the nearest charging station ======\n\n";
-
 	charge_amount = rand() % 41 + 10;
 	cout << "Enter current location: ";
 	int key_location = getLocation();
@@ -318,7 +310,6 @@ void EVCharging::findNearestChargingStation() {
 
 void EVCharging::findCheapestStations() {
 
-	cout << "\n====== Task 7 - Find the cheapest charging station other than the current location ( >25kWh cannot charge at free station*) ======\n\n";
 	cout << "Enter current location: ";
 	charge_amount = rand() % 41 + 10;
 	int key_location = getLocation();
@@ -350,8 +341,6 @@ void EVCharging::findCheapestStations() {
 }
 
 void EVCharging::findCheapestSingleCharge() {
-
-	cout << "\n====== Task 8 - Find the cheapest charging station between origin and destination (single charging) ======\n\n";
 	
 	charge_amount = rand() % 41 + 10;
 	cout << "Enter current location: ";
@@ -392,8 +381,6 @@ void EVCharging::findCheapestSingleCharge() {
 }
 
 void EVCharging::findCheapestPathMultipleStops() {
-
-	cout << "\n====== Task 9 - Find the cheapest charging station between origin and destination (Multiple stops) ======\n\n";
 
 	charge_amount = rand() % 41 + 10;
 	cout << "Enter current location: ";

@@ -41,10 +41,6 @@ WeightedGraphType::WeightedGraphType(int size) {
 	ifstream infile;
 	char fileName[50] = "Weights.txt";
 
-//	cout << "Enter graph adjacency matrix file name: ";
-//	cin >> fileName;
-//	cout << endl;
-
 	infile.open(fileName);
 
 	if (!infile) {

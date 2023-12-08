@@ -13,8 +13,8 @@
 using namespace std;
 
 #include "Location.h"
-#include "distances.h"
-#include "costs.h"
+#include "Distances.h"
+#include "Costs.h"
 #include "WeightedGraph.h"
 #include "EVCharging.h"
 
