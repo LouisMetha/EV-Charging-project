@@ -6,6 +6,7 @@ This project forms a part of DSA subject's assignment. The focus is to utilise t
 - The Big O Notation
 - Algorithms
 - Data Structures
+- OOP
 
 **Project Features**
 
