@@ -8,5 +8,3 @@ This project forms a part of DSA subject's assignment. The focus is to utilise t
 - Data Structures
 - OOP
 
-**Project Features**
-
